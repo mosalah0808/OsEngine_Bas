@@ -1,0 +1,53 @@
+﻿<Window x:Class="OsEngine.Robots.FrontRunner.ViewModels.FrontRunnerUi"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OsEngine.Robots.FrontRunner.ViewModels"
+        mc:Ignorable="d"
+        Title="FrontRunnerUi" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Крупный обьем" Grid.Row="0"/>
+        <TextBlock Text="Отступ" Grid.Row="1"/>
+        <TextBlock Text="Теик профит" Grid.Row="2"/>
+        <TextBlock Text="Лот" Grid.Row="3"/>
+        <TextBlock Text="Состояние текущеи позиции" Grid.Row="5"/>
+        <TextBlock Text="Лот текущий открытый" Grid.Row="6"/>
+        <TextBlock Text="Цена открытия" Grid.Row="7"/>
+        <TextBlock Text="Тейк выставлен по цене" Grid.Row="8"/>
+        <TextBlock Text="Вариационная маржа" Grid.Row="9"/>
+        <TextBlock Text="Накопленная прибыль" Grid.Row="10"/>
+
+        <TextBox Text="{Binding BigVolume}" Grid.Row="0" Grid.Column="1"/>
+        <TextBox Text="{Binding Offset}" Grid.Row="1" Grid.Column="1"/>
+        <TextBox Text="{Binding Take}" Grid.Row="2" Grid.Column="1"/>
+        <TextBox Text="{Binding Lot}" Grid.Row="3" Grid.Column="1"/>
+        <Button Content="{Binding Edit}" Name="Start" Command="{Binding CommandStart}" Grid.Row="4" Grid.Column="1"/>
+        
+        <TextBox Text="{Binding CurrentPos, Mode=TwoWay}" Grid.Row="5" Grid.Column="1"/>
+        <TextBox Text="{Binding LotOpened,Mode=TwoWay}" Grid.Row="6" Grid.Column="1"/>
+        <TextBox Text="{Binding PriceOpened,Mode=TwoWay}" Grid.Row="7" Grid.Column="1"/>
+        <TextBox Text="{Binding TakeOpened,Mode=TwoWay}" Grid.Row="8" Grid.Column="1"/>
+        <TextBox Text="{Binding VarMargin,Mode=TwoWay}" Grid.Row="9" Grid.Column="1"/>
+        <TextBox Text="{Binding ProfitCurrent,Mode=TwoWay}" Grid.Row="10" Grid.Column="1"/>
+    </Grid>
+</Window>
