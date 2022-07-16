@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OsEngine.Robots.FrontRunner
@@ -86,25 +87,29 @@ namespace OsEngine.Robots.FrontRunner
                 foreach (Position pos in positions)
                 {
                     Position = pos;
-                    if (pos.Direction == Side.Sell)
+                    if (Position.State == PositionStateType.Open)
                     {
-                        decimal takePrice = pos.EntryPrice - Take * _tab.Securiti.PriceStep;
-                        _tab.CloseAtProfit(Position, takePrice, takePrice);
-                    }
-                    else if (pos.Direction == Side.Buy)
-                    {
-                        decimal takePrice = pos.EntryPrice + Take * _tab.Securiti.PriceStep;
-                        _tab.CloseAtProfit(Position, takePrice, takePrice);
-                    }
 
-                    CurrentPos = pos.State;
-                    LotOpened = pos.OpenVolume;
-                    PriceOpened = pos.EntryPrice;
-                    TakeOpened = pos.ProfitOrderPrice;
-                    VarMargin = pos.ProfitPortfolioPunkt;
-                    ProfitCurrent += VarMargin;
+                    
+                        if (pos.Direction == Side.Sell)
+                        {
+                            decimal takePrice = pos.EntryPrice - Take * _tab.Securiti.PriceStep;
+                            _tab.CloseAtProfit(Position, takePrice, takePrice);
+                        }
+                        else if (pos.Direction == Side.Buy)
+                        {
+                            decimal takePrice = pos.EntryPrice + Take * _tab.Securiti.PriceStep;
+                            _tab.CloseAtProfit(Position, takePrice, takePrice);
+                        }
 
-                }
+                        CurrentPos = pos.State;
+                        LotOpened = pos.OpenVolume;
+                        PriceOpened = pos.EntryPrice;
+                        TakeOpened = pos.ProfitOrderPrice;
+                        VarMargin = pos.ProfitPortfolioPunkt;
+                        ProfitCurrent += VarMargin;
+                    }
+            }
             }
 
            
@@ -114,8 +119,9 @@ namespace OsEngine.Robots.FrontRunner
                 if (marketDepth.Asks[i].Ask >= BigVolume && Position==null )
                 {
                     decimal price = marketDepth.Asks[i].Price - Offset * _tab.Securiti.PriceStep;
-
+                    VarMargin = 0;
                     Position = _tab.SellAtLimit(Lot, price);
+                    Thread.Sleep(1000);
                     if (Position.State != PositionStateType.Open && Position.State != PositionStateType.Opening)
                     {
                         Position = null;
@@ -128,7 +134,7 @@ namespace OsEngine.Robots.FrontRunner
                     if (Position.State == PositionStateType.Open)
                     {
                         _tab.CloseAtMarket(Position, Position.OpenVolume);
-                        Position = null;
+                        //Position = null;
                     }
                     else if (Position.State == PositionStateType.Opening)
                     {
@@ -139,7 +145,7 @@ namespace OsEngine.Robots.FrontRunner
                 else if (Position != null
                            && Position.State == PositionStateType.Opening
                            && marketDepth.Asks[i].Ask >= BigVolume
-                           && marketDepth.Asks[i].Price > Position.EntryPrice + Offset * _tab.Securiti.PriceStep)
+                           && marketDepth.Asks[i].Price < Position.EntryPrice + Offset * _tab.Securiti.PriceStep)
                 {
                     _tab.CloseAllOrderInSystem();
                     Position = null;
@@ -155,9 +161,9 @@ namespace OsEngine.Robots.FrontRunner
                 if (marketDepth.Bids[i].Bid >= BigVolume && Position == null )
                 {
                     decimal price = marketDepth.Bids[i].Price + Offset * _tab.Securiti.PriceStep;
-
+                    VarMargin = 0;
                     Position = _tab.BuyAtLimit(Lot, price);
-
+                    Thread.Sleep(1000);
                     if (Position.State != PositionStateType.Open && Position.State != PositionStateType.Opening)
                     {
                         Position = null;
@@ -169,10 +175,10 @@ namespace OsEngine.Robots.FrontRunner
                     && marketDepth.Bids[i].Price == Position.EntryPrice- Offset * _tab.Securiti.PriceStep
                     && marketDepth.Bids[i].Bid < BigVolume / 2)
                 {
-                    if (Position.State ==PositionStateType.Open)
+                    if (Position.State == PositionStateType.Open)
                     {
                         _tab.CloseAtMarket(Position, Position.OpenVolume);
-                        Position = null;
+                        //Position = null;
                     }
                     else if (Position.State == PositionStateType.Opening)
                     {
@@ -183,7 +189,7 @@ namespace OsEngine.Robots.FrontRunner
                 } else if (Position != null 
                             && Position.State == PositionStateType.Opening
                             && marketDepth.Bids[i].Bid >= BigVolume
-                            && marketDepth.Bids[i].Price> Position.EntryPrice - Offset * _tab.Securiti.PriceStep)
+                            && marketDepth.Bids[i].Price > Position.EntryPrice - Offset * _tab.Securiti.PriceStep)
                   {
                     _tab.CloseAllOrderInSystem();
                     Position = null;
